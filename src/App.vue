@@ -96,7 +96,9 @@ const openWebcam = () => {
   navigator.mediaDevices
     .getUserMedia({
       video: {
-        facingMode: { exact: toggleCamera.value ? "user" : "environment" },
+        facingMode: {
+          exact: "environment",
+        },
       },
     })
     .then((str) => {
