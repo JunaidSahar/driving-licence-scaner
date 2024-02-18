@@ -28,15 +28,8 @@
         >
           Start Scan
         </button>
-
-        <button
-          class="bg-gray-100 border border-slate-700 px-5 py-2 rounded-lg text-slate-600"
-          @click="(toggleCamera = !toggleCamera), openWebcam"
-        >
-          Switch camera
-        </button>
       </div>
-      <div class="w-full">
+      <div class="w-full relative">
         <video
           v-if="!showImage"
           ref="video"
@@ -45,6 +38,12 @@
           autoplay
         ></video>
         <img v-show="showImage" :src="capturedImage" alt="Captured Screen" />
+        <button
+          class="bg-gray-100 absolute bottom-2 left-2 border border-slate-700 px-5 py-2 rounded-lg text-slate-600"
+          @click="toggleCameraMode"
+        >
+          Switch to back
+        </button>
       </div>
     </div>
     <div>
@@ -109,6 +108,11 @@ const openWebcam = () => {
     .catch((error) => {
       console.error("Error accessing webcam:", error);
     });
+};
+
+const toggleCameraMode = () => {
+  toggleCamera.value = !toggleCamera.value;
+  openWebcam(); // Reopen the webcam with the updated camera mode
 };
 
 const captureScreen = () => {
