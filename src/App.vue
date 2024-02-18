@@ -39,40 +39,40 @@
         ></video>
         <img v-show="showImage" :src="capturedImage" alt="Captured Screen" />
         <button
-          class="bg-gray-100 absolute bottom-2 left-2 border border-slate-700 px-5 py-2 rounded-lg text-slate-600"
+          class="bg-gray-100 absolute text-sm font-medium bottom-2 left-2 border border-slate-700 px-5 py-2 rounded-lg text-slate-600"
           @click="toggleCameraMode"
+          v-show="showWebcam"
         >
-          Switch to back {{ toggleCamera }}
+          Switch to back
         </button>
       </div>
     </div>
     <div>
       <div id="dataDisplay" class="space-y-2">
         <h2 class="text-xl font-semibold">Extracted Data:</h2>
-        <p class="font-semibold text-slate-800" v-if="extractedData.firsName">
+        <p class="font-semibold text-slate-800">
           Full Name:
-          <span class="font-normal">{{
+          <span v-if="extractedData.firsName" class="font-normal">{{
             extractedData.firsName + ` ` + extractedData.lastName
           }}</span>
         </p>
-        <p class="font-semibold text-slate-800" v-if="extractedData.address">
-          Address: <span class="font-normal"> {{ extractedData.address }}</span>
+        <p class="font-semibold text-slate-800">
+          Address:
+          <span v-if="extractedData.address" class="font-normal">
+            {{ extractedData.address }}</span
+          >
         </p>
-        <p
-          class="font-semibold text-slate-800"
-          v-if="extractedData.driverLicenseNumber"
-        >
+        <p class="font-semibold text-slate-800">
           DL Issuance:
-          <span class="font-normal">{{
+          <span v-if="extractedData.driverLicenseNumber" class="font-normal">{{
             extractedData.driverLicenseNumber
           }}</span>
         </p>
-        <p
-          class="font-semibold text-slate-800"
-          v-if="extractedData.expirationDate"
-        >
+        <p class="font-semibold text-slate-800">
           Expiration Date:
-          <span class="font-normal">{{ extractedData.expirationDate }}</span>
+          <span v-if="extractedData.expirationDate" class="font-normal">{{
+            extractedData.expirationDate
+          }}</span>
         </p>
       </div>
     </div>
