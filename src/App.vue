@@ -1,79 +1,149 @@
 <template>
-  <div
-    class="max-w-7xl grid md:grid-cols-2 grid-cols-1 gap-6 py-10 mx-auto px-4"
-  >
-    <div class="space-y-6">
-      <h1 class="text-2xl font-semibold col-span-2">
-        Driver's License Scanner
-      </h1>
-      <div class="flex flex-col items-start gap-2">
-        <button
-          class="bg-gray-100 border border-slate-700 px-5 py-2 rounded-lg text-slate-600"
-          @click="openWebcam"
-          :disabled="showWebcam"
-        >
-          Open Webcam
-        </button>
-        <button
-          class="bg-gray-100 border border-slate-700 px-5 py-2 rounded-lg text-slate-600"
-          @click="captureScreen"
-          :disabled="!showWebcam"
-        >
-          Capture Screen
-        </button>
-        <button
-          class="bg-gray-100 border border-slate-700 px-5 py-2 rounded-lg text-slate-600"
-          @click="startScan"
-          :disabled="!showImage"
-        >
-          Start Scan
-        </button>
-      </div>
-      <div class="w-full relative">
-        <video
-          v-if="!showImage"
-          ref="video"
-          id="video"
-          v-show="showWebcam"
-          autoplay
-        ></video>
-        <img v-show="showImage" :src="capturedImage" alt="Captured Screen" />
-        <button
-          class="bg-gray-100 absolute text-sm font-medium bottom-2 left-2 border border-slate-700 px-5 py-2 rounded-lg text-slate-600"
-          @click="toggleCameraMode"
-          v-show="showWebcam"
-        >
-          Switch to back
-        </button>
-      </div>
-    </div>
-    <div>
-      <div id="dataDisplay" class="space-y-2">
-        <h2 class="text-xl font-semibold">Extracted Data:</h2>
-        <p class="font-semibold text-slate-800">
-          Full Name:
-          <span v-if="extractedData.firsName" class="font-normal">{{
-            extractedData.firsName + ` ` + extractedData.lastName
-          }}</span>
-        </p>
-        <p class="font-semibold text-slate-800">
-          Address:
-          <span v-if="extractedData.address" class="font-normal">
-            {{ extractedData.address }}</span
+  <div class="bg-zinc-900 h-screen">
+    <div class="grid md:grid-cols-12 gap-6 mx-auto">
+      <div class="space-y-4 col-span-3 bg-zinc-900 px-3 py-6 h-full">
+        <h1 class="text-xl font-semibold text-zinc-200">
+          Driver's License Scanner
+        </h1>
+        <div class="flex flex-col items-start gap-2">
+          <button
+            class="bg-zinc-900 flex items-center gap-2 hover:text-zinc-800 font-medium transition-all hover:bg-zinc-400 text-white border border-slate-700 px-5 py-2 rounded-lg"
+            @click="openWebcam"
+            :disabled="showWebcam"
           >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+            >
+              <path
+                fill="none"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.5"
+                d="M10 12V6h1m-1 6h1V6m-1 12v-3h1m0 0v3h-1M7 6v6m0 3v3m7-12v6m0 3v3m3-12v6m0 3v3M6 3H3v3m-1 6h20m-4-9h3v3M6 21H3v-3m15 3h3v-3"
+              />
+            </svg>
+            Scan Front
+          </button>
+          <!-- <button
+            class="bg-gray-100 border border-slate-700 px-5 py-2 rounded-lg text-slate-600"
+            @click="startScan"
+            :disabled="!showImage"
+          >
+            Start Scan
+          </button> -->
+        </div>
+        <div class="space-y-4 bg-zinc-800 p-4 rounded-lg">
+          <p class="text-zinc-100 font-semibold">
+            Overall generated data from AI:
+          </p>
+          <p class="text-zinc-200 font-normal">{{ extractedData }}</p>
+        </div>
+      </div>
+      <div class="col-span-9 bg-zinc-800 h-screen px-4 py-6">
+        <p v-show="showWebcam" class="text-zinc-100">
+          Please refrain from scanning the card in a vertical orientation.
+          <br />
+          Ensure that the card is scanned horizontally to ensure accurate
+          processing. <br />
+          Thank you for your cooperation.
         </p>
-        <p class="font-semibold text-slate-800">
-          DL Issuance:
-          <span v-if="extractedData.driverLicenseNumber" class="font-normal">{{
-            extractedData.driverLicenseNumber
-          }}</span>
-        </p>
-        <p class="font-semibold text-slate-800">
-          Expiration Date:
-          <span v-if="extractedData.expirationDate" class="font-normal">{{
-            extractedData.expirationDate
-          }}</span>
-        </p>
+        <div class="w-fit relative">
+          <video
+            v-if="!showImage"
+            ref="video"
+            id="video"
+            v-show="showWebcam"
+            autoplay
+          ></video>
+          <img v-show="showImage" :src="capturedImage" alt="Captured Screen" />
+          <button
+            class="bg-gray-100 absolute text-sm font-medium top-2 right-2 border border-slate-700 p-2 rounded-full text-slate-600"
+            @click="toggleCameraMode"
+            v-show="showWebcam"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="30"
+              height="30"
+              viewBox="0 0 24 24"
+            >
+              <g
+                fill="none"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+              >
+                <path
+                  d="M11 19H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h5m4 0h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-5"
+                />
+                <circle cx="12" cy="12" r="3" />
+                <path d="m18 22l-3-3l3-3M6 2l3 3l-3 3" />
+              </g>
+            </svg>
+          </button>
+          <button
+            class="bg-gray-100 border border-slate-700 absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-full text-slate-600"
+            @click="captureScreen"
+            :disabled="!showWebcam"
+            v-show="showWebcam"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="32"
+              height="32"
+              viewBox="0 0 24 24"
+            >
+              <path
+                fill="none"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 8V6a2 2 0 0 1 2-2h2M4 16v2a2 2 0 0 0 2 2h2m8-16h2a2 2 0 0 1 2 2v2m-4 12h2a2 2 0 0 0 2-2v-2M9 12a3 3 0 1 0 6 0a3 3 0 1 0-6 0"
+              />
+            </svg>
+          </button>
+        </div>
+        <div
+          id="dataDisplay"
+          class="space-y-2 text-zinc-300"
+          v-if="!showWebcam"
+        >
+          <h2 class="text-3xl pb-6 font-semibold text-zinc-200">
+            Extracted Data:
+          </h2>
+          <p class="font-semibold">
+            Full Name:
+            <span v-if="extractedData.firsName" class="font-normal">{{
+              extractedData.firsName + ` ` + extractedData.lastName
+            }}</span>
+          </p>
+          <p class="font-semibold">
+            Address:
+            <span v-if="extractedData.address" class="font-normal">
+              {{ extractedData.address }}</span
+            >
+          </p>
+          <p class="font-semibold">
+            DL Issuance:
+            <span
+              v-if="extractedData.driverLicenseNumber"
+              class="font-normal"
+              >{{ extractedData.driverLicenseNumber }}</span
+            >
+          </p>
+          <p class="font-semibold">
+            Expiration Date:
+            <span v-if="extractedData.expirationDate" class="font-normal">{{
+              extractedData.expirationDate
+            }}</span>
+          </p>
+        </div>
       </div>
     </div>
   </div>
@@ -147,6 +217,8 @@ const captureScreen = () => {
   showImage.value = true;
 
   stopStreaming();
+
+  startScan();
 };
 
 const sampleImage = "/did.PNG";
@@ -202,10 +274,17 @@ const parseData = (text) => {
 
 const startScan = () => {
   Swal.fire({
-    title: "Scanning...",
-    allowEscapeKey: true,
+    title: "Scaning... Please Wait",
+    allowEscapeKey: false,
+    allowOutsideClick: false,
+    background: "#343a40",
+    color: "#fff",
+    showConfirmButton: false,
+    didOpen: () => {
+      Swal.showLoading();
+    },
   });
-  Tesseract.recognize(capturedImage.value, "eng", {
+  Tesseract.recognize(sampleImage, "eng", {
     logger: (m) => console.log(m),
   })
     .then(({ data: { text } }) => {
@@ -215,9 +294,12 @@ const startScan = () => {
       console.log(parsedData);
       extractedData.value = parsedData;
       showImage.value = false; // Hide the captured image after scan
+      showWebcam.value = false;
       Swal.fire({
         title: "Scan Completed",
         allowEscapeKey: true,
+        background: "#343a40",
+        color: "#fff",
       });
     })
     .catch((error) => {
