@@ -42,7 +42,7 @@
           class="bg-gray-100 absolute bottom-2 left-2 border border-slate-700 px-5 py-2 rounded-lg text-slate-600"
           @click="toggleCameraMode"
         >
-          Switch to back
+          Switch to back {{ toggleCamera }}
         </button>
       </div>
     </div>
@@ -97,7 +97,7 @@ const openWebcam = () => {
     .getUserMedia({
       video: {
         facingMode: {
-          exact: toggleCamera ? "user" : "environment",
+          exact: toggleCamera.value ? "user" : "environment",
         },
       },
     })
@@ -114,7 +114,9 @@ const openWebcam = () => {
 
 const toggleCameraMode = () => {
   toggleCamera.value = !toggleCamera.value;
-  openWebcam(); // Reopen the webcam with the updated camera mode
+  setTimeout(() => {
+    openWebcam(); // Reopen the webcam with the updated camera mode
+  }, 1000);
 };
 
 const captureScreen = () => {
