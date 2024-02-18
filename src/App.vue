@@ -28,6 +28,13 @@
         >
           Start Scan
         </button>
+
+        <button
+          class="bg-gray-100 border border-slate-700 px-5 py-2 rounded-lg text-slate-600"
+          @click="(toggleCamera = !toggleCamera), openWebcam"
+        >
+          Switch camera
+        </button>
       </div>
       <div class="w-full">
         <video
@@ -78,6 +85,8 @@ const capturedImage = ref("");
 
 let stream;
 
+const toggleCamera = ref(true);
+
 const openWebcam = () => {
   const video = document.getElementById("video");
   if (!video) {
@@ -86,7 +95,11 @@ const openWebcam = () => {
   }
 
   navigator.mediaDevices
-    .getUserMedia({ video: true })
+    .getUserMedia({
+      video: {
+        facingMode: { exact: toggleCamera.value ? "user" : "environment" },
+      },
+    })
     .then((str) => {
       video.srcObject = str;
       video.play();
