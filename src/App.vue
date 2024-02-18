@@ -49,16 +49,23 @@
     <div>
       <div id="dataDisplay" class="space-y-2">
         <h2 class="text-xl font-semibold">Extracted Data:</h2>
-        <p class="font-semibold text-slate-800" v-if="extractedData.fullName">
+        <p class="font-semibold text-slate-800" v-if="extractedData.firsName">
           Full Name:
-          <span class="font-normal">{{ extractedData.fullName }}</span>
+          <span class="font-normal">{{
+            extractedData.firsName + ` ` + extractedData.lastName
+          }}</span>
         </p>
         <p class="font-semibold text-slate-800" v-if="extractedData.address">
           Address: <span class="font-normal"> {{ extractedData.address }}</span>
         </p>
-        <p class="font-semibold text-slate-800" v-if="extractedData.issueDate">
-          Issue Date:
-          <span class="font-normal">{{ extractedData.issueDate }}</span>
+        <p
+          class="font-semibold text-slate-800"
+          v-if="extractedData.driverLicenseNumber"
+        >
+          DL Issuance:
+          <span class="font-normal">{{
+            extractedData.driverLicenseNumber
+          }}</span>
         </p>
         <p
           class="font-semibold text-slate-800"
@@ -157,32 +164,37 @@ const parseData = (text) => {
   const data = {};
 
   // Define regular expressions for each field to match the corresponding data
-  const fullNameRegex = /FN\s+(.*?)(?=\nLN|$)/s;
-  const addressRegex = /LN\s+(.*?)(?=\nDL|$)/s;
-  const issueDateRegex = /DL\s+([^\n]+)/s;
-  const expirationDateRegex = /EXP\s+([^\n]+)/s;
+  const firstNameRegex = /FN\s+([A-Za-z\s]+)\b/;
+  const lastNameRegex = /LN\s+([^ ]+)/;
+  const addressRegex = /\b\d+\b\s+[A-Za-z\s,]+[A-Z]{2}\s+\d{5}\b/;
+  const dlRegex = /DL\s+(\w+)/s;
+  const expiryDateRegex = /EXP\s+(.+)/;
 
   // Execute regular expressions on the text and extract the matched data
-  const fullNameMatch = fullNameRegex.exec(text);
+  const firstNameMatch = firstNameRegex.exec(text);
+  const lastNameMatch = lastNameRegex.exec(text);
   const addressMatch = addressRegex.exec(text);
-  const issueDateMatch = issueDateRegex.exec(text);
-  const expirationDateMatch = expirationDateRegex.exec(text);
+  const dlMatch = dlRegex.exec(text);
+  const expirationDateMatch = expiryDateRegex.exec(text);
 
   // Check if a match was found for each field and store it in the data object
-  if (fullNameMatch) {
-    data.fullName = fullNameMatch[1].split("\n")[0];
+  if (firstNameMatch) {
+    data.firsName = firstNameMatch[1].trim();
+  }
+  if (lastNameMatch) {
+    data.lastName = lastNameMatch[1].trim();
   }
 
   if (addressMatch) {
-    data.address = addressMatch[1].trim();
+    data.address = addressMatch[0].trim();
   }
 
-  if (issueDateMatch) {
-    data.issueDate = issueDateMatch[1].trim().replace(/[^0-9/]/g, "");
+  if (dlMatch) {
+    data.driverLicenseNumber = dlMatch[1].trim();
   }
 
   if (expirationDateMatch) {
-    data.expirationDate = expirationDateMatch[1].trim().replace(/[^0-9/]/g, "");
+    data.expirationDate = expirationDateMatch[1].trim();
   }
 
   return data;
