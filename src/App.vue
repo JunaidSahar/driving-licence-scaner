@@ -36,15 +36,18 @@
             Start Scan
           </button> -->
         </div>
-        <div class="space-y-4 bg-zinc-800 p-4 rounded-lg">
+        <div
+          class="space-y-4 bg-zinc-800 p-4 rounded-lg"
+          v-if="overallExtractData.length"
+        >
           <p class="text-zinc-100 font-semibold">
             Overall generated data from AI:
           </p>
-          <p class="text-zinc-200 font-normal">{{ extractedData }}</p>
+          <p class="text-zinc-200 font-normal">{{ overallExtractData }}</p>
         </div>
       </div>
       <div class="col-span-9 bg-zinc-800 h-screen px-4 py-6">
-        <p v-show="showWebcam" class="text-zinc-100">
+        <p v-show="showWebcam" class="text-zinc-100 pb-3">
           Please refrain from scanning the card in a vertical orientation.
           <br />
           Ensure that the card is scanned horizontally to ensure accurate
@@ -158,6 +161,7 @@ const showWebcam = ref(false);
 const showImage = ref(false);
 const extractedData = ref({});
 const capturedImage = ref("");
+const overallExtractData = ref("");
 
 let stream;
 
@@ -284,12 +288,13 @@ const startScan = () => {
       Swal.showLoading();
     },
   });
-  Tesseract.recognize(sampleImage, "eng", {
+  Tesseract.recognize(capturedImage.value, "eng", {
     logger: (m) => console.log(m),
   })
     .then(({ data: { text } }) => {
       console.log("Extracted text:", text);
       const parsedData = parseData(text);
+      overallExtractData.value = text;
       // extractedData.value = { ...extractedData.value, ...parsedData };
       console.log(parsedData);
       extractedData.value = parsedData;
