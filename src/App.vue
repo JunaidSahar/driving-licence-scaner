@@ -191,11 +191,7 @@ const parseData = (text) => {
 const startScan = () => {
   Swal.fire({
     title: "Scanning...",
-    allowEscapeKey: false,
-    allowOutsideClick: false,
-    didOpen: () => {
-      Swal.showLoading();
-    },
+    allowEscapeKey: true,
   });
   Tesseract.recognize(capturedImage.value, "eng", {
     logger: (m) => console.log(m),
@@ -207,7 +203,10 @@ const startScan = () => {
       console.log(parsedData);
       extractedData.value = parsedData;
       showImage.value = false; // Hide the captured image after scan
-      Swal.hideLoading();
+      Swal.fire({
+        title: "Scan Completed",
+        allowEscapeKey: true,
+      });
     })
     .catch((error) => {
       console.error("Error extracting text:", error);
