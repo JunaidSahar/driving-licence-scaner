@@ -109,14 +109,18 @@ const openWebcam = () => {
     })
     .catch((error) => {
       console.error("Error accessing webcam:", error);
+      alert(
+        "Error accessing webcam: Your device is not supported Another Camera"
+      );
     });
 };
 
 const toggleCameraMode = () => {
+  stopStreaming();
   toggleCamera.value = !toggleCamera.value;
   setTimeout(() => {
     openWebcam(); // Reopen the webcam with the updated camera mode
-  }, 1000);
+  }, 2000);
 };
 
 const captureScreen = () => {
