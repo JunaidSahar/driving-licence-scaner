@@ -244,7 +244,7 @@ const parseData = (text) => {
   const lastNameRegex = /LN\s+([^ ]+)/;
   const addressRegex = /\b\d+\b\s+[A-Za-z\s,]+[A-Z]{2}\s+\d{5}\b/;
   const dlRegex = /DL\s+(\w+)/s;
-  const expiryDateRegex = /EXP\s+(.+)/;
+  const expiryDateRegex = /EXP\s+(.+)/i;
 
   // Execute regular expressions on the text and extract the matched data
   const firstNameMatch = firstNameRegex.exec(text);
