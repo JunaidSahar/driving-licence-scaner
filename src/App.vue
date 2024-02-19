@@ -276,9 +276,9 @@ const parseData = (text) => {
   return data;
 };
 
-const startScan = () => {
+const startScan = async () => {
   Swal.fire({
-    title: "Scaning... Please Wait",
+    title: "Scanning... Please Wait",
     allowEscapeKey: false,
     allowOutsideClick: false,
     background: "#343a40",
@@ -288,27 +288,41 @@ const startScan = () => {
       Swal.showLoading();
     },
   });
-  Tesseract.recognize(capturedImage.value, "eng", {
-    logger: (m) => console.log(m),
-  })
-    .then(({ data: { text } }) => {
-      console.log("Extracted text:", text);
-      const parsedData = parseData(text);
-      overallExtractData.value = text;
-      // extractedData.value = { ...extractedData.value, ...parsedData };
-      console.log(parsedData);
-      extractedData.value = parsedData;
-      showImage.value = false; // Hide the captured image after scan
-      showWebcam.value = false;
-      Swal.fire({
-        title: "Scan Completed",
-        allowEscapeKey: true,
-        background: "#343a40",
-        color: "#fff",
-      });
-    })
-    .catch((error) => {
-      console.error("Error extracting text:", error);
+
+  try {
+    const {
+      data: { text },
+    } = await Tesseract.recognize(capturedImage.value, "eng", {
+      lang: "eng", // Language: English
+      tessedit_char_whitelist:
+        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", // Whitelist characters
+      psm: 3, // Page segmentation mode: auto detection of blocks of text
     });
+
+    console.log("Extracted text:", text);
+
+    // Further processing if needed
+    const parsedData = parseData(text);
+    overallExtractData.value = text;
+    extractedData.value = parsedData;
+    overallExtractData.value = text;
+    showImage.value = false; // Hide the captured image after scan
+    showWebcam.value = false;
+    Swal.fire({
+      title: "Scan Completed",
+      allowEscapeKey: true,
+      background: "#343a40",
+      color: "#fff",
+    });
+  } catch (error) {
+    console.error("Error extracting text:", error);
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: "An error occurred while processing the image. Please try again.",
+      background: "#343a40",
+      color: "#fff",
+    });
+  }
 };
 </script>
