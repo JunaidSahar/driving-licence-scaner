@@ -213,8 +213,11 @@ const captureScreen = () => {
 
   const canvas = document.createElement("canvas");
   const context = canvas.getContext("2d");
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
+  const scaleFactor = 0.5; // Set the scale factor for downscaling (e.g., 0.5 for 50% reduction)
+  const scaledWidth = video.videoWidth * scaleFactor;
+  const scaledHeight = video.videoHeight * scaleFactor;
+  canvas.width = scaledWidth;
+  canvas.height = scaledHeight;
   context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
   capturedImage.value = canvas.toDataURL();
@@ -295,10 +298,9 @@ const startScan = async () => {
     } = await Tesseract.recognize(capturedImage.value, "eng", {
       lang: "eng",
       config: {
-        tessedit_char_blacklist: "!@#$%^&*()_+-=[]{};:'\",.<>?/|\\`~",
-        tessedit_char_whitelist:
-          "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
-        psm: 3,
+        // tessedit_char_blacklist: "!@#$%^&*()_+-=[]{};:'\",.<>?/|\\`~",
+        // tessedit_char_whitelist:
+        //   "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
       },
       logger: (m) => console.log(m),
     });
