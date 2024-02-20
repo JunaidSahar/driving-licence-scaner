@@ -204,14 +204,6 @@ const toggleCameraMode = () => {
   }, 2000);
 };
 
-function preprocessImage(canvas) {
-  const image = canvas
-    .getContext("2d")
-    .getImageData(0, 0, canvas.width, canvas.height);
-  thresholdFilter(image.data, 0.01);
-  return image;
-}
-
 const captureScreen = () => {
   const video = document.getElementById("video");
   if (!video) {
@@ -221,8 +213,9 @@ const captureScreen = () => {
 
   const canvas = document.createElement("canvas");
   const context = canvas.getContext("2d");
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
   context.drawImage(video, 0, 0, canvas.width, canvas.height);
-  context.putImageData(preprocessImage(canvas), 0, 0);
 
   capturedImage.value = canvas.toDataURL();
   showImage.value = true;
@@ -299,7 +292,7 @@ const startScan = async () => {
   try {
     const {
       data: { text },
-    } = await Tesseract.recognize(capturedImage.value, "eng", {
+    } = await Tesseract.recognize(sampleImage, "eng", {
       lang: "eng",
       config: {
         tessedit_char_blacklist: "!@#$%^&*()_+-=[]{};:'\",.<>?/|\\`~",
