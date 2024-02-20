@@ -292,7 +292,7 @@ const startScan = async () => {
   try {
     const {
       data: { text },
-    } = await Tesseract.recognize(sampleImage, "eng", {
+    } = await Tesseract.recognize(capturedImage.value, "eng", {
       lang: "eng",
       config: {
         tessedit_char_blacklist: "!@#$%^&*()_+-=[]{};:'\",.<>?/|\\`~",
