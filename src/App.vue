@@ -204,6 +204,14 @@ const toggleCameraMode = () => {
   }, 2000);
 };
 
+function preprocessImage(canvas) {
+  const image = canvas
+    .getContext("2d")
+    .getImageData(0, 0, canvas.width, canvas.height);
+  thresholdFilter(image.data, 0.5);
+  return image;
+}
+
 const captureScreen = () => {
   const video = document.getElementById("video");
   if (!video) {
@@ -213,9 +221,8 @@ const captureScreen = () => {
 
   const canvas = document.createElement("canvas");
   const context = canvas.getContext("2d");
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
   context.drawImage(video, 0, 0, canvas.width, canvas.height);
+  context.putImageData(preprocessImage(canvas), 0, 0);
 
   capturedImage.value = canvas.toDataURL();
   showImage.value = true;
@@ -293,10 +300,14 @@ const startScan = async () => {
     const {
       data: { text },
     } = await Tesseract.recognize(capturedImage.value, "eng", {
-      lang: "eng", // Language: English
-      tessedit_char_whitelist:
-        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", // Whitelist characters
-      psm: 3, // Page segmentation mode: auto detection of blocks of text
+      lang: "eng",
+      config: {
+        tessedit_char_blacklist: "!@#$%^&*()_+-=[]{};:'\",.<>?/|\\`~",
+        tessedit_char_whitelist:
+          "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+        psm: 3,
+      },
+      logger: (m) => console.log(m),
     });
 
     console.log("Extracted text:", text);
@@ -325,4 +336,25 @@ const startScan = async () => {
     });
   }
 };
+
+function thresholdFilter(pixels, level) {
+  if (level === undefined) {
+    level = 0.5;
+  }
+  const thresh = Math.floor(level * 255);
+  for (let i = 0; i < pixels.length; i += 4) {
+    const red = pixels[i];
+    const green = pixels[i + 1];
+    const blue = pixels[i + 2];
+
+    const gray = 0.2126 * red + 0.7152 * green + 0.0722 * blue;
+    let value;
+    if (gray >= thresh) {
+      value = 255;
+    } else {
+      value = 0;
+    }
+    pixels[i] = pixels[i + 1] = pixels[i + 2] = value;
+  }
+}
 </script>
