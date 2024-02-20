@@ -208,7 +208,7 @@ function preprocessImage(canvas) {
   const image = canvas
     .getContext("2d")
     .getImageData(0, 0, canvas.width, canvas.height);
-  thresholdFilter(image.data, 0.2);
+  thresholdFilter(image.data, 0.8);
   return image;
 }
 
